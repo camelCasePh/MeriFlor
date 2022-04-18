@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/User/AndroidStudioProjects/LearningBuddyTest/app/src/main/res/layout/fragment_classes__student.xml" value="0.25" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/LearningBuddyTest/app/src/main/res/layout/pop_up_window_join.xml" value="0.1" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/LearningBuddyTest/app/src/main/res/layout/student_class_item.xml" value="0.33" />
         <entry key="..\:/Users/User/AndroidStudioProjects/Test100/app/src/main/res/drawable/ic_menu_user.xml" value="0.2203125" />
         <entry key="..\:/Users/User/AndroidStudioProjects/Test100/app/src/main/res/drawable/round_profile.xml" value="0.1578125" />
         <entry key="..\:/Users/User/AndroidStudioProjects/Test100/app/src/main/res/layout/activity_homepage.xml" value="0.33" />

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/studentClassName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Class Name"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif"
+        android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+        android:singleLine="true"/>
+
+    <TextView
+        android:id="@+id/studentClassSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Class Section"
+        android:fontFamily="sans-serif"
+        android:singleLine="true"
+        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
+
+</LinearLayout>

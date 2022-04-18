@@ -56,13 +56,15 @@ public class FragmentClasses_Teacher extends Fragment{
     private AddClassesAdapter adapter;
     private View view;
     private DocumentSnapshot classDocSnapshot;
-    private ArrayList<AddClasses> listClasses = new ArrayList<>();
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_classes_teacher, container, false);
+
+
+
         fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,16 +73,8 @@ public class FragmentClasses_Teacher extends Fragment{
             }
         });
 
-        setUpRecyclerView();
         getClassList();
         return view;
-    }
-
-    private void setUpRecyclerView() {
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(adapter);
     }
 
     private void getClassList(){

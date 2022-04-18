@@ -1,64 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="30dp">
-
-    <ImageView
-        android:id="@+id/classes_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_classes_profile"
-        app:layout_constraintBottom_toTopOf="@+id/et_class_code"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <EditText
-        android:id="@+id/et_class_code"
+        android:id="@+id/student_joinCode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="20dp"
         android:backgroundTint="@color/darkBlueGreen"
         android:hint="Code"
         android:minHeight="48dp"
         android:singleLine="true"
         android:textColor="@color/darkBlueGreen"
         android:textColorHint="@color/darkBlueGreen"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_join"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/classes_image" />
+        android:textSize="16sp"/>
 
-    <Button
-        android:id="@+id/btn_join"
-        android:layout_width="165dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:backgroundTint="@color/darkBlueGreen"
-        android:text="Join"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_cancel"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_class_code" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btn_cancel"
-        android:layout_width="165dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:backgroundTint="@color/darkBlueGreen"
-        android:text="Cancel"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_join"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_join"
-        app:layout_constraintTop_toTopOf="@+id/btn_join" />
+        <Button
+            android:id="@+id/student_btnJoin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/darkBlueGreen"
+            android:text="Join"
+            android:textSize="15sp"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/student_btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/darkBlueGreen"
+            android:text="Cancel"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

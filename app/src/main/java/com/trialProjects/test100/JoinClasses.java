@@ -1,4 +1,4 @@
-package com.trialProjects.test100.activities;
+package com.trialProjects.test100;
 
 public class JoinClasses {
 
@@ -19,16 +19,8 @@ public class JoinClasses {
         return classID;
     }
 
-    public void setClassID(String classID) {
-        this.classID = classID;
-    }
-
     public String getStudentID() {
         return studentID;
-    }
-
-    public void setStudentID(String studentID) {
-        this.studentID = studentID;
     }
 
     public String getClassName() {
@@ -38,4 +30,5 @@ public class JoinClasses {
     public String getClassSection() {
         return classSection;
     }
+
 }

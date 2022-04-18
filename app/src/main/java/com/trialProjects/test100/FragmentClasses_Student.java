@@ -22,26 +22,26 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.trialProjects.test100.activities.JoinClasses;
 
 public class FragmentClasses_Student extends Fragment {
 
-    AlertDialog.Builder dialogBuilder;
-    AlertDialog dialog;
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog dialog;
 
-    EditText classCode;
-    Button btn_join, btn_cancel;
-    View view;
-    JoinClassAdapter adapter;
+    private RecyclerView recyclerView;
+    private EditText classCode;
+    private Button btn_join, btn_cancel;
+    private View view;
+    private JoinClassAdapter adapter;
 
-    FloatingActionButton fab;
+    private FloatingActionButton fab;
 
 
     @Override
@@ -49,156 +49,123 @@ public class FragmentClasses_Student extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_classes__student, container, false);
-
-        fab = view.findViewById(R.id.fab);
+        fab = view.findViewById(R.id.student_fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                joinClass();
+                showJoinDialog();
             }
         });
 
-        setUpRecyclerView();
-        getClassList();
-
+        getClassListView();
         return view;
     }
 
-    private void getClassList() {
-
-        CollectionReference classRef = FirebaseFirestore.getInstance().collection("Students");
+    private void getClassListView() {
+        CollectionReference classRef = FirebaseFirestore
+                .getInstance()
+                .collection("STUDENTS");
         Query classQuery = classRef
-                .whereEqualTo("studentID", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                .whereEqualTo("studentID", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .orderBy("className", Query.Direction.ASCENDING);
 
-
-
-        FirestoreRecyclerOptions<JoinClasses> options = new FirestoreRecyclerOptions.Builder<JoinClasses>().setQuery(classQuery, JoinClasses.class).build();
+        FirestoreRecyclerOptions<JoinClasses> options = new FirestoreRecyclerOptions.Builder<JoinClasses>()
+                .setQuery(classQuery, JoinClasses.class)
+                .build();
         adapter = new JoinClassAdapter(options);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView = view.findViewById(R.id.student_classListView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
     }
 
-    private void setUpRecyclerView() {
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(adapter);
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter.startListening();
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
 
-    public void joinClass(){
+    private void showJoinDialog() {
         dialogBuilder = new AlertDialog.Builder(getContext());
         View joinClassView = getLayoutInflater().inflate(R.layout.pop_up_window_join, null);
-
-        classCode = joinClassView.findViewById(R.id.et_class_code);
-        btn_join = joinClassView.findViewById(R.id.btn_join);
-        btn_cancel = joinClassView.findViewById(R.id.btn_cancel);
-
+        
+        classCode = joinClassView.findViewById(R.id.student_joinCode);
+        btn_join = joinClassView.findViewById(R.id.student_btnJoin);
+        btn_cancel = joinClassView.findViewById(R.id.student_btnCancel);
+        
         dialogBuilder.setView(joinClassView);
         dialog = dialogBuilder.create();
         dialog.show();
-
+        
         btn_join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String classID = classCode.getText().toString().trim();
-
-                if(classID.isEmpty())
-                {
-                    Toast.makeText(getContext(),"Please enter the access code of your class",Toast.LENGTH_SHORT).show();
-                    return;
+                if(classID.isEmpty()){
+                    Toast.makeText(getContext(),
+                            "Please enter the access code of your class",
+                            Toast.LENGTH_SHORT)
+                            .show();
                 }else{
-                    joinNewClass(classID);
+                    checkClassExists(classID);
                     dialog.dismiss();
                 }
             }
         });
 
-        btn_cancel.setOnClickListener(new View.OnClickListener() {
+        btn_cancel.setOnClickListener(v -> dialog.dismiss());
+    }
+
+    private void checkClassExists(String classID) {
+        String accessCode = classID;
+        DbQuery.checkClassExist(classID, new MyCompleteListener() {
             @Override
-            public void onClick(View v) {
-                dialog.dismiss();
+            public void onSuccess() {
+                Log.d(TAG, "Class Exists");
+                checkStudentClassExist(classID);
+            }
+            @Override
+            public void onFailure() {
+                Log.d(TAG, "Class does not exists");
             }
         });
     }
 
-
-///////////
-    private void joinNewClass(String classID) {
-
-        String studentID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        CollectionReference classRef = FirebaseFirestore.getInstance().collection("CLASSES");
-        Query classQuery = classRef
-                .whereEqualTo("classID", classID);
-        classQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    private void checkStudentClassExist(String classID) {
+        FirebaseAuth firebaseAuth;
+        firebaseAuth = FirebaseAuth.getInstance();
+        String studentID = firebaseAuth.getCurrentUser().getUid();
+        DbQuery.checkStudentClassExist(classID, new MyCompleteListener() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    DocumentReference addClassRef = FirebaseFirestore.getInstance().collection("Students")
-                            .document();
-
-                    JoinClasses classes = new JoinClasses();
-                    classes.setStudentID(studentID);
-                    classes.setClassID(classID);
-
-                    addClassRef.set(classes).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()){
-                                Log.d(TAG, "Class Joined");
-                                Toast.makeText(getContext(), "Joined Class", Toast.LENGTH_SHORT).show();
-                            }else{
-                                Toast.makeText(getContext(), "Error!", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                }else{
-                    Toast.makeText(getContext(), "Class not exist", Toast.LENGTH_SHORT).show();
-                }
+            public void onSuccess() {
+                Log.d(TAG, "This class already exist in your list");
+            }
+            @Override
+            public void onFailure() {
+                joinClassSuccessfully(classID, studentID);
             }
         });
+    }
 
-
-
-        /*CollectionReference classRef = FirebaseFirestore.getInstance().collection("CLASSES");
-        classRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    private void joinClassSuccessfully(String classID, String studentID) {
+        DbQuery.joinClass(classID, studentID, new MyCompleteListener() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        if(document.equals(classID)){
-                            Log.d(TAG, "lahossdfsd?");
-                            DocumentReference addClassRef = FirebaseFirestore.getInstance().collection("Students")
-                                    .document();
-
-                            JoinClasses classes = new JoinClasses();
-                            classes.setStudentID(studentID);
-                            classes.setclassID(classID);
-
-                            addClassRef.set(classes).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()){
-                                        Log.d(TAG, "Class Joined");
-                                        Toast.makeText(getContext(), "Joined Class", Toast.LENGTH_SHORT).show();
-                                    }else{
-                                        Toast.makeText(getContext(), "Error!", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        }else{
-                            Toast.makeText(getContext(), "Class not exist", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }else{
-                    Toast.makeText(getContext(), "ERROR!", Toast.LENGTH_SHORT).show();
-                }
+            public void onSuccess() {
+                Log.d(TAG, "Class joined");
             }
-        });*/
+
+            @Override
+            public void onFailure() {
+                Log.d(TAG, "Error occurred");
+            }
+        });
     }
 }
